@@ -1,0 +1,4 @@
+[submodule "LiquidCrystal_I2C"]
+	path = LiquidCrystal_I2C
+    url = https://github.com/johnrickman/LiquidCrystal_I2C
+    branch = 738765e388816fb2a687d40436cd2604febce1b1
