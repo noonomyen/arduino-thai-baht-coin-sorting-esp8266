@@ -7,6 +7,12 @@ cd ./arduino-coin-sorting
 git submodule update --init --recursive
 ```
 
+## Copy library from submodule
+```sh
+cp ./LiquidCrystal_I2C/LiquidCrystal_I2C.h .
+cp ./LiquidCrystal_I2C/LiquidCrystal_I2C.cpp .
+```
+
 ## Setup arduino-cli
 ```
 mkdir arduino && cd ./arduino
