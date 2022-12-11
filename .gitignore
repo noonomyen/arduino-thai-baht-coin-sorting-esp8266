@@ -2,3 +2,6 @@
 /build
 /arduino
 /tmp
+/LiquidCrystal_I2C.h
+/LiquidCrystal_I2C.cpp
+/submodule-status.txt
