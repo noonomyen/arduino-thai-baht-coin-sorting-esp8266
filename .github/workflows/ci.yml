@@ -6,8 +6,28 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
+      - name: Get submodule status
+        run: |
+          git submodule status | awk '{print $1 " " $2}' > submodule-status.txt
+          cat ./submodule-status.txt
+      - name: Cache library form submodule
+        id: cache-library-from-submodule
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./LiquidCrystal_I2C.h
+            ./LiquidCrystal_I2C.cpp
+          key: cache-library-from-submodule-${{ hashFiles('./submodule-status.txt') }}
+      - name: Recursive git submodules
+        if: steps.cache-library-from-submodule.outputs.cache-hit != 'true'
+        uses: actions/checkout@v3
         with:
           submodules: 'recursive'
+      - name: Get source library from submodule
+        if: steps.cache-library-from-submodule.outputs.cache-hit != 'true'
+        run: |
+            cp ./LiquidCrystal_I2C/LiquidCrystal_I2C.h .
+            cp ./LiquidCrystal_I2C/LiquidCrystal_I2C.cpp .
       - name: Cache arduino-cli
         id: cache-arduino-cli
         uses: actions/cache@v3
