@@ -13,6 +13,7 @@ namespace MEM {
     uint16_t read_10_baht();
     void begin();
     void reset();
+    bool commit();
 };
 
 #endif /* __EEPROM_HPP__ */

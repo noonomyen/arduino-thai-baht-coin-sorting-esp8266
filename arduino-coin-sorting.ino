@@ -24,6 +24,9 @@ bool led = 0;
 bool set_led = 0;
 time_t led_t;
 
+time_t delay_mem_save;
+bool request_mem_save = 0;
+
 void setup() {
     Serial.begin(115200);
     LCD::init();
@@ -121,6 +124,14 @@ void loop() {
         LCD::set_10_baht(coin_10);
         LCD::refresh();
         request_lcd_refresh = 0;
+        if (request_mem_save != 1) {
+            request_mem_save = 1;
+            delay_mem_save = millis();
+        };
+    };
+    if (millis() - delay_mem_save > 200) {
+        MEM::commit();
+        request_mem_save = 0;
     };
     if (set_led) {
         set_led = 0;
