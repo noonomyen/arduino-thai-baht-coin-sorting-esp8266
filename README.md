@@ -16,7 +16,9 @@ cp ./LiquidCrystal_I2C/LiquidCrystal_I2C.cpp .
 ## Setup arduino-cli
 ```
 mkdir arduino && cd ./arduino
-curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=$(pwd)/arduino sh -s 0.29.0
+wget https://github.com/arduino/arduino-cli/releases/download/0.29.0/arduino-cli_0.29.0_Linux_64bit.tar.gz -O arduino-cli_0.29.0_Linux_64bit.tar.gz
+tar -xf arduino-cli_0.29.0_Linux_64bit.tar.gz
+cd ..
 ```
 
 ## Install ESP8266 Arduino Core
