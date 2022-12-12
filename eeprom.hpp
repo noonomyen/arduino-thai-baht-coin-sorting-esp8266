@@ -14,6 +14,8 @@ namespace MEM {
     void begin();
     void reset();
     bool commit();
+    bool get_auto_lcd_off();
+    void set_auto_lcd_off(bool);
 };
 
 #endif /* __EEPROM_HPP__ */

@@ -11,6 +11,7 @@ namespace LCD {
     void refresh();
     void clear();
     void print(char*);
+    void print(char*, char*);
     void on();
     void off();
     bool is_on();

@@ -122,7 +122,18 @@ bool LCD::is_on() {
 
 void LCD::print(char *str_) {
     lcd.clear();
+    lcd.setCursor(0, 0);
     lcd.printf(str_);
+    request_full_refresh = 1;
+};
+
+void LCD::print(char *str_0, char *str_1) {
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.printf(str_0);
+    lcd.setCursor(0, 1);
+    lcd.printf(str_1);
+    request_full_refresh = 1;
 };
 
 void LCD::clear() {

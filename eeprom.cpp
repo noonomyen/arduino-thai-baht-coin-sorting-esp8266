@@ -40,3 +40,17 @@ void MEM::reset() {
 bool MEM::commit() {
     return EEPROM.commit();
 };
+
+bool MEM::get_auto_lcd_off() {
+    return EEPROM.read(7) & 0xFF;
+};
+
+void MEM::set_auto_lcd_off(bool _) {
+    if (_ == 1) {
+        EEPROM.write(7, 0xFF);
+    } else {
+        EEPROM.write(7, 0);
+    };
+    EEPROM.commit();
+    delay(200);
+};

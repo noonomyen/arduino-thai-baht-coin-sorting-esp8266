@@ -2,6 +2,7 @@
 
 #include "lcd.hpp"
 #include "eeprom.hpp"
+#include "self_test.hpp"
 
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
@@ -27,6 +28,9 @@ time_t led_t;
 time_t delay_mem_save;
 bool request_mem_save = 0;
 
+time_t lcd_timeout_t;
+bool auto_lcd_off = 0;
+
 void setup() {
     Serial.begin(115200);
     LCD::init();
@@ -34,6 +38,7 @@ void setup() {
     coin_1 = MEM::read_1_baht();
     coin_5 = MEM::read_5_baht();
     coin_10 = MEM::read_10_baht();
+    auto_lcd_off = MEM::get_auto_lcd_off();
     LCD::set_1_baht(coin_1);
     LCD::set_5_baht(coin_5);
     LCD::set_10_baht(coin_10);
@@ -83,7 +88,7 @@ void loop() {
     if (analogRead(A0) > 800) {
         set_led = 1;
         if (button == 0) {
-            if ((millis() - button_count_t < 500) && (millis() - button_count_t > 100)) {
+            if ((millis() - button_count_t < 500) && (millis() - button_count_t > 10)) {
                 button_count += 1;
             } else {
                 button_count = 1;
@@ -91,6 +96,9 @@ void loop() {
             button_count_t = millis();
             button = 1;
             button_t = millis();
+            String _ = "-> " + (String)(button_count);
+            LCD::clear();
+            LCD::print((char*)_.c_str());
         } else {
             if (millis() - button_t > 5000) {
                 button_t += 60000;
@@ -107,11 +115,38 @@ void loop() {
     };
     if ((button_count != 0) && (button != 1) && (millis() - button_count_t > 500)) {
         if (button_count == 1) {
-            if (LCD::is_on()) {
-                LCD::off();
+            if (auto_lcd_off) {
+                request_lcd_refresh = 1;
             } else {
-                LCD::on();
+                if (LCD::is_on()) {
+                    LCD::off();
+                } else {
+                    LCD::on();
+                };
             };
+        } else if (button_count == 3) {
+            LCD::on();
+            if (MEM::get_auto_lcd_off()) {
+                MEM::set_auto_lcd_off(0);
+                auto_lcd_off = 0;
+                LCD::print("AUTO SCREEN OFF", "IS DISABLED");
+                delay(2000);
+            } else {
+                MEM::set_auto_lcd_off(1);
+                auto_lcd_off = 1;
+                LCD::print("AUTO SCREEN OFF", "IS ENABLED");
+                delay(2000);
+            };
+            request_lcd_refresh = 1;
+        } else if (button_count > 5) {
+            LCD::on();
+            self_test::counting();
+            LCD::set_1_baht(coin_1);
+            LCD::set_5_baht(coin_5);
+            LCD::set_10_baht(coin_10);
+            request_lcd_refresh = 1;
+        } else {
+            request_lcd_refresh = 1;
         };
         button_count = 0;
     };
@@ -128,6 +163,10 @@ void loop() {
             request_mem_save = 1;
             delay_mem_save = millis();
         };
+        lcd_timeout_t = millis();
+    };
+    if (auto_lcd_off && LCD::is_on() && millis() - lcd_timeout_t > 30000) {
+        LCD::off();
     };
     if (millis() - delay_mem_save > 200) {
         MEM::commit();
