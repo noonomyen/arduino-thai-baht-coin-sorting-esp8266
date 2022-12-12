@@ -59,15 +59,15 @@ void LCD::refresh() {
         };
     };
     lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.printf(buffer);
     lcd.setCursor(0, 1);
+    lcd.printf(buffer);
+    lcd.setCursor(0, 0);
     lcd.printf("  1   5  10     ");
-    lcd.setCursor(13, 1);
+    lcd.setCursor(13, 0);
     lcd.write(0);
-    lcd.setCursor(14, 1);
+    lcd.setCursor(14, 0);
     lcd.write(1);
-    lcd.setCursor(15, 1);
+    lcd.setCursor(15, 0);
     lcd.write(2);
 };
 
