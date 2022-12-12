@@ -6,11 +6,17 @@ uint16_t coin_5_baht = 0;
 uint16_t coin_10_baht = 0;
 uint16_t coin_total_baht = 0;
 
+bool lcd_status = 0;
+bool request_full_refresh = 1;
+
 void LCD::refresh() {
     coin_total_baht = coin_1_baht + (coin_5_baht * 5) + (coin_10_baht * 10);
     if (coin_total_baht > 9999 || coin_1_baht > 999 || coin_1_baht > 999 || coin_1_baht > 999) {
         lcd.clear();
+        lcd.setCursor(0, 0);
         lcd.printf("ERROR...");
+        lcd.setCursor(0, 1);
+        lcd.printf("Total %d baht", coin_total_baht);
         return;
     };
     char buffer[16] = {
@@ -58,27 +64,31 @@ void LCD::refresh() {
             };
         };
     };
-    lcd.clear();
     lcd.setCursor(0, 1);
     lcd.printf(buffer);
-    lcd.setCursor(0, 0);
-    lcd.printf("  1   5  10     ");
-    lcd.setCursor(13, 0);
-    lcd.write(0);
-    lcd.setCursor(14, 0);
-    lcd.write(1);
-    lcd.setCursor(15, 0);
-    lcd.write(2);
+    if (request_full_refresh) {;
+        lcd.setCursor(0, 0);
+        lcd.printf("  1   5  10     ");
+        lcd.setCursor(13, 0);
+        lcd.write(0);
+        lcd.setCursor(14, 0);
+        lcd.write(1);
+        lcd.setCursor(15, 0);
+        lcd.write(2);
+        request_full_refresh = 0;
+    };
 };
 
 void LCD::init() {
     lcd.init();
     lcd.clear();
     lcd.backlight();
+    lcd.setBacklight(HIGH);
     lcd.createChar(0, custom_char::char_3610);
     lcd.createChar(1, custom_char::char_3634);
     lcd.createChar(2, custom_char::char_3607);
     lcd.setCursor(0, 0);
+    lcd_status = 1;
 };
 
 void LCD::set_1_baht(uint16_t num) { coin_1_baht = num; };
@@ -90,4 +100,31 @@ void LCD::reset() {
     coin_5_baht = 0;
     coin_10_baht = 0;
     LCD::refresh();
+};
+
+void LCD::off() {
+    lcd.setBacklight(LOW);
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd_status = 0;
+};
+
+void LCD::on() {
+    request_full_refresh = 1;
+    LCD::refresh();
+    lcd.setBacklight(HIGH);
+    lcd_status = 1;
+};
+
+bool LCD::is_on() {
+    return lcd_status;
+};
+
+void LCD::print(char *str_) {
+    lcd.clear();
+    lcd.printf(str_);
+};
+
+void LCD::clear() {
+    lcd.clear();
 };

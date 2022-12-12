@@ -13,6 +13,8 @@ bool sensor_10_baht = 0;
 
 bool button = 0;
 time_t button_t;
+uint8_t button_count = 0;
+time_t button_count_t = 0;
 
 uint16_t coin_1 = 0;
 uint16_t coin_5 = 0;
@@ -75,9 +77,15 @@ void loop() {
     } else {
         sensor_10_baht = 0;
     };
-    if (analogRead(A0) > 512) {
+    if (analogRead(A0) > 800) {
         set_led = 1;
         if (button == 0) {
+            if ((millis() - button_count_t < 500) && (millis() - button_count_t > 100)) {
+                button_count += 1;
+            } else {
+                button_count = 1;
+            };
+            button_count_t = millis();
             button = 1;
             button_t = millis();
         } else {
@@ -88,12 +96,26 @@ void loop() {
                 coin_5 = 0;
                 coin_10 = 0;
                 request_lcd_refresh = 1;
+                button_count = 0;
             };
         };
     } else {
         button = 0;
     };
+    if ((button_count != 0) && (button != 1) && (millis() - button_count_t > 500)) {
+        if (button_count == 1) {
+            if (LCD::is_on()) {
+                LCD::off();
+            } else {
+                LCD::on();
+            };
+        };
+        button_count = 0;
+    };
     if (request_lcd_refresh) {
+        if (! LCD::is_on()) {
+            LCD::on();
+        };
         LCD::set_1_baht(coin_1);
         LCD::set_5_baht(coin_5);
         LCD::set_10_baht(coin_10);
