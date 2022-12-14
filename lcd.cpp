@@ -17,6 +17,7 @@ void LCD::refresh() {
         lcd.printf("ERROR...");
         lcd.setCursor(0, 1);
         lcd.printf("Total %d baht", coin_total_baht);
+        request_full_refresh = 1;
         return;
     };
     char buffer[16] = {
