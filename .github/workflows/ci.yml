@@ -55,21 +55,9 @@ jobs:
         run: |
           ./arduino/arduino-cli --verbose --config-file arduino-cli.yaml core update-index
           ./arduino/arduino-cli --verbose --config-file arduino-cli.yaml core install esp8266:esp8266@3.0.2
-      - name: Compile with cache build
-        id: compile-with-cache-build
+      - name: Compile
         run: |
           rm -rf ./tmp
           ./arduino/arduino-cli --verbose --config-file arduino-cli.yaml \
           compile --fqbn esp8266:esp8266:nodemcuv2 \
-          --build-path ./tmp \
-          --build-cache-path ./arduino/cache-build
-        continue-on-error: true
-      - name: Compile without cache build
-        id: compile-without-cache-build
-        if: steps.compile-with-cache-build.outcome != 'success'
-        run:
-          rm -rf ./tmp ./arduino/cache-build
-          ./arduino/arduino-cli --verbose --config-file arduino-cli.yaml \
-          compile --fqbn esp8266:esp8266:nodemcuv2 \
-          --build-path ./tmp \
-          --build-cache-path ./arduino/cache-build
+          --build-path ./tmp
