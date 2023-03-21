@@ -34,7 +34,7 @@ jobs:
         with:
           path: |
             ./arduino/arduino-cli
-          key: arduino-cli_0.29.0_Linux_64bit
+          key: arduino-cli_0.31.0_Linux_64bit
       - name: Cache arduino-cli setup
         id: cache-arduino-cli-setup
         uses: actions/cache@v3
@@ -43,18 +43,18 @@ jobs:
             ./arduino/**
             !./arduino/arduino-cli
           key: cache-arduino-cli
-      - name: Setup arduino-cli_0.29.0_Linux_64bit
+      - name: Setup arduino-cli_0.31.0_Linux_64bit
         if: steps.cache-arduino-cli.outputs.cache-hit != 'true'
         run: |
-          wget https://github.com/arduino/arduino-cli/releases/download/0.29.0/arduino-cli_0.29.0_Linux_64bit.tar.gz -O arduino-cli_0.29.0_Linux_64bit.tar.gz
+          wget https://github.com/arduino/arduino-cli/releases/download/0.31.0/arduino-cli_0.31.0_Linux_64bit.tar.gz -O arduino-cli_0.31.0_Linux_64bit.tar.gz
           mkdir arduino && cd ./arduino
-          tar -xf ../arduino-cli_0.29.0_Linux_64bit.tar.gz
-          cd .. && rm ./arduino-cli_0.29.0_Linux_64bit.tar.gz
+          tar -xf ../arduino-cli_0.31.0_Linux_64bit.tar.gz
+          cd .. && rm ./arduino-cli_0.31.0_Linux_64bit.tar.gz
       - name: Setup arduino core
         if: steps.cache-arduino-cli-setup.outputs.cache-hit != 'true'
         run: |
           ./arduino/arduino-cli --verbose --config-file arduino-cli.yaml core update-index
-          ./arduino/arduino-cli --verbose --config-file arduino-cli.yaml core install esp8266:esp8266@3.0.2
+          ./arduino/arduino-cli --verbose --config-file arduino-cli.yaml core install esp8266:esp8266@3.1.2
       - name: Compile
         run: |
           rm -rf ./tmp
